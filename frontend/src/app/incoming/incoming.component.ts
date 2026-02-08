@@ -9,6 +9,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 
 import { IncomingService, UploadIncomingResponse } from '../services/incoming.service';
+import { NotificationService } from '../services/notification.service';
 
 @Component({
 	selector: "app-incoming",
@@ -36,6 +37,7 @@ export class IncomingComponent implements OnInit {
 		private route: ActivatedRoute,
 		private router: Router,
 		private incomingService: IncomingService,
+		private notificationService: NotificationService,
 	) {}
 
 	ngOnInit() {
@@ -97,7 +99,7 @@ export class IncomingComponent implements OnInit {
 				error: (err) => {
 					this.uploading = false;
 					console.error("Failed to upload incoming data:", err);
-					alert(
+					this.notificationService.error(
 						"Failed to upload incoming data: " +
 							(err.error?.error || err.message),
 					);

@@ -1,60 +1,87 @@
 .projects-container {
+  width: 100%;
   max-width: 1400px;
   margin: 0 auto;
   padding: 0;
+  box-sizing: border-box;
 }
 
 .page-header {
-  margin-bottom: 32px;
+  margin-bottom: 24px;
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex: 1;
 }
 
 .page-title {
   font-size: 36px;
   font-weight: 700;
-  margin: 0 0 8px 0;
+  margin: 0;
   color: #1a1a1a;
   letter-spacing: -0.5px;
 }
 
-.page-subtitle {
-  font-size: 16px;
-  color: rgba(0, 0, 0, 0.6);
-  margin: 0;
+.fab-button {
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(33, 150, 243, 0.3) !important;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 16px rgba(33, 150, 243, 0.4) !important;
+  }
 }
 
-.create-card {
-  margin-bottom: 32px;
+.create-form-container {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  animation: slideDown 0.3s ease-out;
+  margin-top: 16px;
 }
 
-.create-card mat-card-header {
-  margin-bottom: 16px;
-}
-
-.create-card mat-card-title {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  font-size: 20px;
-  font-weight: 600;
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .create-form {
   display: flex;
-  gap: 16px;
-  align-items: flex-start;
+  gap: 12px;
+  align-items: flex-end;
 }
 
-.full-width {
+.form-field {
   flex: 1;
+  min-width: 200px;
 }
 
-.create-button {
-  margin-top: 8px;
+.submit-button {
   height: 56px;
-  min-width: 160px;
+  min-width: 120px;
   display: flex;
   align-items: center;
   gap: 8px;
+  white-space: nowrap;
 }
 
 .button-spinner {
@@ -62,26 +89,15 @@
 }
 
 .projects-section {
-  margin-top: 32px;
-}
-
-.section-header {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  margin-bottom: 24px;
-}
-
-.section-title {
-  font-size: 24px;
-  font-weight: 600;
-  margin: 0;
-  color: #1a1a1a;
+  margin-top: 0;
 }
 
 .count-chip {
   background-color: rgba(33, 150, 243, 0.1);
   color: #2196f3;
+  font-size: 14px;
+  font-weight: 500;
+  height: 32px;
 }
 
 .loading-container {
@@ -207,13 +223,28 @@
     font-size: 28px;
   }
 
-  .create-form {
-    flex-direction: column;
+  .header-content {
+    flex-direction: row;
+    align-items: center;
   }
 
-  .create-button {
+  .header-left {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .fab-button {
+    flex-shrink: 0;
+  }
+
+  .create-form {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .submit-button {
     width: 100%;
-    margin-top: 0;
   }
 
   .projects-grid {

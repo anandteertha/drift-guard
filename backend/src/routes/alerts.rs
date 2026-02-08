@@ -12,6 +12,10 @@ pub async fn list_alerts(
     let filter = AlertFilter {
         status: query.status.clone(),
         severity: query.severity.clone(),
+        feature_name: query.feature_name.clone(),
+        alert_type: query.alert_type.clone(),
+        start_time: query.start_time.clone(),
+        end_time: query.end_time.clone(),
     };
 
     match alerts::list_alerts(&pool, &project_id, &filter).await {

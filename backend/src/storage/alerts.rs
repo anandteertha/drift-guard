@@ -74,6 +74,31 @@ pub async fn list_alerts(
     if let Some(severity) = &filter.severity {
         query.push_str(&format!(" AND severity = ?{}", param_index));
         params.push(severity.clone());
+        param_index += 1;
+    }
+
+    if let Some(feature_name) = &filter.feature_name {
+        query.push_str(&format!(" AND feature_name = ?{}", param_index));
+        params.push(feature_name.clone());
+        param_index += 1;
+    }
+
+    if let Some(alert_type) = &filter.alert_type {
+        query.push_str(&format!(" AND alert_type = ?{}", param_index));
+        params.push(alert_type.clone());
+        param_index += 1;
+    }
+
+    if let Some(start_time) = &filter.start_time {
+        query.push_str(&format!(" AND created_at >= ?{}", param_index));
+        params.push(start_time.clone());
+        param_index += 1;
+    }
+
+    if let Some(end_time) = &filter.end_time {
+        query.push_str(&format!(" AND created_at <= ?{}", param_index));
+        params.push(end_time.clone());
+        param_index += 1;
     }
 
     query.push_str(" ORDER BY created_at DESC");

@@ -23,13 +23,33 @@ export class AlertsService {
 
   constructor(private http: HttpClient) {}
 
-  listAlerts(projectId: string, status?: string, severity?: string): Observable<Alert[]> {
+  listAlerts(
+    projectId: string, 
+    status?: string, 
+    severity?: string,
+    featureName?: string,
+    alertType?: string,
+    startTime?: string,
+    endTime?: string
+  ): Observable<Alert[]> {
     let params = new HttpParams();
     if (status) {
       params = params.set('status', status);
     }
     if (severity) {
       params = params.set('severity', severity);
+    }
+    if (featureName) {
+      params = params.set('feature_name', featureName);
+    }
+    if (alertType) {
+      params = params.set('alert_type', alertType);
+    }
+    if (startTime) {
+      params = params.set('start_time', startTime);
+    }
+    if (endTime) {
+      params = params.set('end_time', endTime);
     }
     return this.http.get<Alert[]>(
       `${this.apiUrl}/projects/${projectId}/alerts`,

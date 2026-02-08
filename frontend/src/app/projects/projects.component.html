@@ -1,37 +1,32 @@
 <div class="projects-container">
   <div class="page-header">
-    <h1 class="page-title">Projects</h1>
-    <p class="page-subtitle">Manage your data drift monitoring projects</p>
-  </div>
-  
-  <mat-card class="create-card">
-    <mat-card-header>
-      <mat-card-title>
-        <mat-icon>add_circle</mat-icon>
-        Create New Project
-      </mat-card-title>
-    </mat-card-header>
-    <mat-card-content>
+    <div class="header-content">
+      <div class="header-left">
+        <h1 class="page-title">Projects</h1>
+        <mat-chip *ngIf="projects.length > 0 && !loading" class="count-chip">{{ projects.length }} {{ projects.length === 1 ? 'project' : 'projects' }}</mat-chip>
+      </div>
+      <button mat-fab color="primary" (click)="showCreateForm = !showCreateForm" class="fab-button" matTooltip="Create New Project">
+        <mat-icon>{{ showCreateForm ? 'close' : 'add' }}</mat-icon>
+      </button>
+    </div>
+    
+    <div class="create-form-container" *ngIf="showCreateForm">
       <form (ngSubmit)="createProject()" class="create-form">
-        <mat-form-field appearance="outline" class="full-width">
+        <mat-form-field appearance="outline" class="form-field">
           <mat-label>Project Name</mat-label>
-          <input matInput [(ngModel)]="newProjectName" name="projectName" placeholder="Enter a descriptive project name" required>
+          <input matInput [(ngModel)]="newProjectName" name="projectName" placeholder="Enter project name" required>
           <mat-icon matPrefix>folder</mat-icon>
         </mat-form-field>
-        <button mat-raised-button color="primary" type="submit" [disabled]="!newProjectName || creating" class="create-button">
+        <button mat-raised-button color="primary" type="submit" [disabled]="!newProjectName.trim() || creating" class="submit-button">
           <mat-icon *ngIf="!creating">add</mat-icon>
-          <mat-spinner *ngIf="creating" diameter="20" class="button-spinner"></mat-spinner>
-          <span>{{ creating ? 'Creating...' : 'Create Project' }}</span>
+          <mat-spinner *ngIf="creating" diameter="18" class="button-spinner"></mat-spinner>
+          <span>{{ creating ? 'Creating...' : 'Create' }}</span>
         </button>
       </form>
-    </mat-card-content>
-  </mat-card>
+    </div>
+  </div>
 
   <div class="projects-section">
-    <div class="section-header">
-      <h2 class="section-title">All Projects</h2>
-      <mat-chip *ngIf="projects.length > 0" class="count-chip">{{ projects.length }} {{ projects.length === 1 ? 'project' : 'projects' }}</mat-chip>
-    </div>
 
     <div *ngIf="loading" class="loading-container">
       <mat-spinner></mat-spinner>
@@ -41,7 +36,7 @@
     <div *ngIf="!loading && projects.length === 0" class="empty-state">
       <mat-icon class="empty-icon">folder_open</mat-icon>
       <h3>No projects yet</h3>
-      <p>Create your first project to start monitoring data drift</p>
+      <p>Click the <mat-icon style="vertical-align: middle; font-size: 18px;">add</mat-icon> button above to create your first project</p>
     </div>
 
     <div class="projects-grid" *ngIf="!loading && projects.length > 0">

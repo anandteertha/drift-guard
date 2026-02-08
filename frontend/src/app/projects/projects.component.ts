@@ -9,7 +9,9 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { ProjectsService, Project } from '../services/projects.service';
+import { NotificationService } from '../services/notification.service';
 
 @Component({
   selector: 'app-projects',
@@ -24,7 +26,8 @@ import { ProjectsService, Project } from '../services/projects.service';
     MatFormFieldModule,
     MatIconModule,
     MatChipsModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    MatTooltipModule
   ],
   templateUrl: './projects.component.html',
   styleUrls: ['./projects.component.scss']
@@ -34,10 +37,12 @@ export class ProjectsComponent implements OnInit {
   newProjectName = '';
   creating = false;
   loading = true;
+  showCreateForm = false;
 
   constructor(
     private projectsService: ProjectsService,
-    private router: Router
+    private router: Router,
+    private notificationService: NotificationService
   ) {}
 
   ngOnInit() {
@@ -68,12 +73,14 @@ export class ProjectsComponent implements OnInit {
       next: (project) => {
         this.newProjectName = '';
         this.creating = false;
+        this.showCreateForm = false;
         this.loadProjects();
+        this.notificationService.success('Project created successfully!');
       },
       error: (err) => {
         console.error('Failed to create project:', err);
         this.creating = false;
-        alert('Failed to create project: ' + (err.error?.error || err.message));
+        this.notificationService.error('Failed to create project: ' + (err.error?.error || err.message));
       }
     });
   }

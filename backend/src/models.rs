@@ -65,6 +65,10 @@ pub struct Alert {
 pub struct AlertFilter {
     pub status: Option<String>,
     pub severity: Option<String>,
+    pub feature_name: Option<String>,
+    pub alert_type: Option<String>,
+    pub start_time: Option<String>, // ISO 8601 format
+    pub end_time: Option<String>,   // ISO 8601 format
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]

@@ -1,16 +1,19 @@
 /* Global Styles - Using prebuilt Material theme with custom enhancements */
 
 /* Global Styles */
-html, body {
+html {
   height: 100%;
-  margin: 0;
-  padding: 0;
+  overflow: hidden;
 }
 
 body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
   font-family: 'Inter', 'Roboto', 'Helvetica Neue', sans-serif;
   background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-  min-height: 100vh;
+  background-attachment: fixed;
   color: #333;
 }
 
@@ -66,6 +69,11 @@ mat-form-field {
   
   .mat-mdc-text-field-wrapper {
     border-radius: 8px;
+  }
+  
+  .mat-mdc-form-field-icon-prefix {
+    margin-right: 8px;
+    color: rgba(0, 0, 0, 0.54);
   }
 }
 
@@ -151,22 +159,64 @@ mat-form-field {
   padding: 24px;
 }
 
-/* Scrollbar Styling */
-::-webkit-scrollbar {
+/* Scrollbar Styling - Only on scrollable containers */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #888 #f1f1f1;
+}
+
+*::-webkit-scrollbar {
   width: 8px;
   height: 8px;
 }
 
-::-webkit-scrollbar-track {
+*::-webkit-scrollbar-track {
   background: #f1f1f1;
   border-radius: 4px;
 }
 
-::-webkit-scrollbar-thumb {
+*::-webkit-scrollbar-thumb {
   background: #888;
   border-radius: 4px;
   
   &:hover {
     background: #555;
+  }
+}
+
+/* Prevent double scrollbars */
+html, body {
+  overflow: hidden;
+}
+
+/* Notification Styles */
+.notification-success {
+  background-color: #4caf50 !important;
+  color: white !important;
+}
+
+.notification-error {
+  background-color: #f44336 !important;
+  color: white !important;
+}
+
+.notification-warning {
+  background-color: #ff9800 !important;
+  color: white !important;
+}
+
+.notification-info {
+  background-color: #2196f3 !important;
+  color: white !important;
+}
+
+::ng-deep .mat-mdc-snack-bar-container {
+  .mdc-snackbar__surface {
+    border-radius: 8px !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+  }
+  
+  .mdc-snackbar__label {
+    font-weight: 500 !important;
   }
 }

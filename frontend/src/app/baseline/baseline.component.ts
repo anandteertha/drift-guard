@@ -9,6 +9,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTableModule } from '@angular/material/table';
 import { MatChipsModule } from '@angular/material/chips';
 import { BaselineService, BaselineMetadata } from '../services/baseline.service';
+import { NotificationService } from '../services/notification.service';
 
 @Component({
   selector: 'app-baseline',
@@ -38,7 +39,8 @@ export class BaselineComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private baselineService: BaselineService
+    private baselineService: BaselineService,
+    private notificationService: NotificationService
   ) {}
 
   ngOnInit() {
@@ -74,12 +76,12 @@ export class BaselineComponent implements OnInit {
         this.uploading = false;
         this.selectedFile = null;
         this.loadBaseline();
-        alert('Baseline uploaded successfully!');
+        this.notificationService.success('Baseline uploaded successfully!');
       },
       error: (err) => {
         this.uploading = false;
         console.error('Failed to upload baseline:', err);
-        alert('Failed to upload baseline: ' + (err.error?.error || err.message));
+        this.notificationService.error('Failed to upload baseline: ' + (err.error?.error || err.message));
       }
     });
   }

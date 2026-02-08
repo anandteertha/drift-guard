@@ -1,6 +1,8 @@
 .baseline-container {
+  width: 100%;
   max-width: 1200px;
   margin: 0 auto;
+  box-sizing: border-box;
 }
 
 .page-header {
@@ -220,6 +222,8 @@
 
 .table-container {
   overflow-x: auto;
+  overflow-y: visible;
+  -webkit-overflow-scrolling: touch;
 }
 
 .features-table {

@@ -1,78 +1,87 @@
 <div class="alerts-container">
   <div class="page-header">
-    <button mat-icon-button (click)="goBack()" class="back-button">
-      <mat-icon>arrow_back</mat-icon>
-    </button>
-    <div>
+    <div class="header-left">
+      <button mat-icon-button (click)="goBack()" class="back-button">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
       <h1 class="page-title">Alerts</h1>
-      <p class="page-subtitle">Monitor and manage data drift alerts</p>
+      <mat-chip *ngIf="alerts.length > 0 && !loading" class="count-chip">{{ alerts.length }} {{ alerts.length === 1 ? 'alert' : 'alerts' }}</mat-chip>
     </div>
   </div>
 
-  <mat-card class="filters-card">
-    <mat-card-content>
-      <div class="filters-container">
-        <mat-form-field appearance="outline" class="filter-field">
-          <mat-label>Status</mat-label>
-          <mat-select [(ngModel)]="statusFilter" (selectionChange)="loadAlerts()">
-            <mat-option value="">All Status</mat-option>
-            <mat-option value="OPEN">Open</mat-option>
-            <mat-option value="ACK">Acknowledged</mat-option>
-          </mat-select>
-          <mat-icon matPrefix>filter_list</mat-icon>
-        </mat-form-field>
+  <div class="toolbar-section">
+    <div class="filters-bar">
+      <mat-form-field appearance="outline" class="filter-field">
+        <mat-label>Status</mat-label>
+        <mat-select [(ngModel)]="statusFilter" (selectionChange)="loadAlerts()">
+          <mat-option value="">All</mat-option>
+          <mat-option value="OPEN">Open</mat-option>
+          <mat-option value="ACK">Acknowledged</mat-option>
+        </mat-select>
+      </mat-form-field>
 
-        <mat-form-field appearance="outline" class="filter-field">
-          <mat-label>Severity</mat-label>
-          <mat-select [(ngModel)]="severityFilter" (selectionChange)="loadAlerts()">
-            <mat-option value="">All Severities</mat-option>
-            <mat-option value="WARN">Warning</mat-option>
-            <mat-option value="CRITICAL">Critical</mat-option>
-          </mat-select>
-          <mat-icon matPrefix>priority_high</mat-icon>
-        </mat-form-field>
+      <mat-form-field appearance="outline" class="filter-field">
+        <mat-label>Severity</mat-label>
+        <mat-select [(ngModel)]="severityFilter" (selectionChange)="loadAlerts()">
+          <mat-option value="">All</mat-option>
+          <mat-option value="WARN">Warning</mat-option>
+          <mat-option value="CRITICAL">Critical</mat-option>
+        </mat-select>
+      </mat-form-field>
 
-        <button mat-stroked-button (click)="clearFilters()" class="clear-button">
-          <mat-icon>clear</mat-icon>
-          Clear Filters
-        </button>
+      <mat-form-field appearance="outline" class="filter-field">
+        <mat-label>Type</mat-label>
+        <mat-select [(ngModel)]="alertTypeFilter" (selectionChange)="loadAlerts()">
+          <mat-option value="">All</mat-option>
+          <mat-option *ngFor="let type of alertTypes" [value]="type">{{ type }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="filter-field">
+        <mat-label>Feature</mat-label>
+        <mat-select [(ngModel)]="featureFilter" (selectionChange)="loadAlerts()">
+          <mat-option value="">All</mat-option>
+          <mat-option *ngFor="let feature of featureNames" [value]="feature">{{ feature }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="filter-field date-field">
+        <mat-label>Start Time</mat-label>
+        <input matInput type="datetime-local" [(ngModel)]="startTimeFilter" (change)="loadAlerts()" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="filter-field date-field">
+        <mat-label>End Time</mat-label>
+        <input matInput type="datetime-local" [(ngModel)]="endTimeFilter" (change)="loadAlerts()" />
+      </mat-form-field>
+
+      <button mat-icon-button (click)="clearFilters()" class="clear-button" matTooltip="Clear Filters" *ngIf="hasActiveFilters()">
+        <mat-icon>clear</mat-icon>
+      </button>
+    </div>
+
+    <div class="summary-bar" *ngIf="alerts.length > 0">
+      <div class="summary-chip total">
+        <mat-icon>notifications</mat-icon>
+        <span class="summary-value">{{ alerts.length }}</span>
+        <span class="summary-label">Total</span>
       </div>
-    </mat-card-content>
-  </mat-card>
-
-  <div class="alerts-summary" *ngIf="alerts.length > 0">
-    <mat-card class="summary-card">
-      <mat-card-content>
-        <div class="summary-item">
-          <mat-icon class="summary-icon">notifications</mat-icon>
-          <div>
-            <div class="summary-value">{{ alerts.length }}</div>
-            <div class="summary-label">Total Alerts</div>
-          </div>
-        </div>
-        <div class="summary-item">
-          <mat-icon class="summary-icon critical">error</mat-icon>
-          <div>
-            <div class="summary-value">{{ getCriticalCount() }}</div>
-            <div class="summary-label">Critical</div>
-          </div>
-        </div>
-        <div class="summary-item">
-          <mat-icon class="summary-icon warning">warning</mat-icon>
-          <div>
-            <div class="summary-value">{{ getWarningCount() }}</div>
-            <div class="summary-label">Warnings</div>
-          </div>
-        </div>
-        <div class="summary-item">
-          <mat-icon class="summary-icon">check_circle</mat-icon>
-          <div>
-            <div class="summary-value">{{ getOpenCount() }}</div>
-            <div class="summary-label">Open</div>
-          </div>
-        </div>
-      </mat-card-content>
-    </mat-card>
+      <div class="summary-chip critical">
+        <mat-icon>error</mat-icon>
+        <span class="summary-value">{{ getCriticalCount() }}</span>
+        <span class="summary-label">Critical</span>
+      </div>
+      <div class="summary-chip warning">
+        <mat-icon>warning</mat-icon>
+        <span class="summary-value">{{ getWarningCount() }}</span>
+        <span class="summary-label">Warnings</span>
+      </div>
+      <div class="summary-chip open">
+        <mat-icon>check_circle</mat-icon>
+        <span class="summary-value">{{ getOpenCount() }}</span>
+        <span class="summary-label">Open</span>
+      </div>
+    </div>
   </div>
 
   <div *ngIf="loading" class="loading-container">
@@ -86,10 +95,9 @@
     <p>There are no alerts matching your current filters.</p>
   </div>
 
-  <mat-card *ngIf="!loading && alerts.length > 0" class="alerts-table-card">
-    <mat-card-content>
-      <div class="table-container">
-        <table mat-table [dataSource]="alerts" class="alerts-table">
+  <div *ngIf="!loading && alerts.length > 0" class="table-wrapper">
+    <div class="table-container">
+      <table mat-table [dataSource]="dataSource" class="alerts-table">
           <ng-container matColumnDef="created_at">
             <th mat-header-cell *matHeaderCellDef>Time</th>
             <td mat-cell *matCellDef="let alert" data-label="Time">
@@ -163,7 +171,11 @@
           <tr mat-row *matRowDef="let row; columns: displayedColumns" class="alert-row"></tr>
         </table>
       </div>
-    </mat-card-content>
-  </mat-card>
+      <mat-paginator 
+        [pageSizeOptions]="[10, 25, 50, 100]" 
+        [pageSize]="25"
+        showFirstLastButtons>
+      </mat-paginator>
+    </div>
 </div>
 
