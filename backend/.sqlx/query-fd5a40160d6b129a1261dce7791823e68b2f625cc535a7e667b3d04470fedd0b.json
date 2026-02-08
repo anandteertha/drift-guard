@@ -1,0 +1,12 @@
+{
+  "db_name": "SQLite",
+  "query": "\n        INSERT INTO baselines (baseline_id, project_id, baseline_version, prediction_rate, created_at)\n        VALUES (?1, ?2, ?3, ?4, ?5)\n        ",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Right": 5
+    },
+    "nullable": []
+  },
+  "hash": "fd5a40160d6b129a1261dce7791823e68b2f625cc535a7e667b3d04470fedd0b"
+}

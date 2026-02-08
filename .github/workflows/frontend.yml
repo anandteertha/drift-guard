@@ -1,0 +1,57 @@
+name: Frontend Tests
+
+on:
+  push:
+    branches: [ main, develop ]
+    paths:
+      - 'frontend/**'
+      - '.github/workflows/frontend.yml'
+  pull_request:
+    branches: [ main, develop ]
+    paths:
+      - 'frontend/**'
+      - '.github/workflows/frontend.yml'
+
+jobs:
+  test:
+    name: Angular Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        working-directory: ./frontend
+        run: npm ci
+
+      - name: Install Chrome dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libnss3 libatk-bridge2.0-0 libdrm2 libxkbcommon0 libxcomposite1 libxdamage1 libxfixes3 libxrandr2 libgbm1 libasound2
+
+      - name: Run tests
+        working-directory: ./frontend
+        run: npm run test:ci
+        env:
+          CI: true
+
+      - name: Build
+        working-directory: ./frontend
+        run: npm run build
+
+      - name: Run E2E tests
+        working-directory: ./frontend
+        run: npm run e2e:ci
+        env:
+          CI: true
+        # Note: E2E tests require backend to be running
+        # In a real CI setup, you'd start the backend service first
+

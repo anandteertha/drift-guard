@@ -1,0 +1,20 @@
+{
+  "db_name": "SQLite",
+  "query": "\n        SELECT MAX(baseline_version) FROM baselines WHERE project_id = ?1\n        ",
+  "describe": {
+    "columns": [
+      {
+        "name": "MAX(baseline_version)",
+        "ordinal": 0,
+        "type_info": "Int64"
+      }
+    ],
+    "parameters": {
+      "Right": 1
+    },
+    "nullable": [
+      true
+    ]
+  },
+  "hash": "0b94d02937c42f82e944c013399b527ca1e5aa5c5df196012aeb39a72552b8e5"
+}

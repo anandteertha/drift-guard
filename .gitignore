@@ -1,0 +1,27 @@
+# Rust
+/target/
+**/*.rs.bk
+*.pdb
+drift_guard.db
+drift_guard.db-journal
+
+# Node
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Angular
+dist/
+.angular/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+

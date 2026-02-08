@@ -1,0 +1,12 @@
+{
+  "db_name": "SQLite",
+  "query": "\n        UPDATE alerts SET status = 'ACK' WHERE alert_id = ?1\n        ",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Right": 1
+    },
+    "nullable": []
+  },
+  "hash": "15eba4457b096a8ad6f106fd7a491590d516610d7f2645e8d2e2dab774dab20a"
+}

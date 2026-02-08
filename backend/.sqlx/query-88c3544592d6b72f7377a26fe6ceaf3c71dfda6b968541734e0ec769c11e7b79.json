@@ -1,0 +1,44 @@
+{
+  "db_name": "SQLite",
+  "query": "\n        SELECT feature_id, baseline_id, feature_name, feature_type, metadata\n        FROM baseline_features\n        WHERE baseline_id = ?1\n        ORDER BY feature_name\n        ",
+  "describe": {
+    "columns": [
+      {
+        "name": "feature_id",
+        "ordinal": 0,
+        "type_info": "Text"
+      },
+      {
+        "name": "baseline_id",
+        "ordinal": 1,
+        "type_info": "Text"
+      },
+      {
+        "name": "feature_name",
+        "ordinal": 2,
+        "type_info": "Text"
+      },
+      {
+        "name": "feature_type",
+        "ordinal": 3,
+        "type_info": "Text"
+      },
+      {
+        "name": "metadata",
+        "ordinal": 4,
+        "type_info": "Text"
+      }
+    ],
+    "parameters": {
+      "Right": 1
+    },
+    "nullable": [
+      true,
+      false,
+      false,
+      false,
+      false
+    ]
+  },
+  "hash": "88c3544592d6b72f7377a26fe6ceaf3c71dfda6b968541734e0ec769c11e7b79"
+}
