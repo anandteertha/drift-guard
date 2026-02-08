@@ -49,7 +49,7 @@ describe('AlertsService', () => {
     req.flush(mockAlerts);
   });
 
-  it('should list alerts with filters', () => {
+  it('should list alerts with status and severity filters', () => {
     const mockAlerts: Alert[] = [];
 
     service.listAlerts('123', 'OPEN', 'WARN').subscribe(alerts => {
@@ -57,6 +57,52 @@ describe('AlertsService', () => {
     });
 
     const req = httpMock.expectOne('http://127.0.0.1:8080/api/projects/123/alerts?status=OPEN&severity=WARN');
+    expect(req.request.method).toBe('GET');
+    req.flush(mockAlerts);
+  });
+
+  it('should list alerts with all filters', () => {
+    const mockAlerts: Alert[] = [];
+    const startTime = '2024-01-01T00:00:00Z';
+    const endTime = '2024-01-31T23:59:59Z';
+
+    service.listAlerts('123', 'OPEN', 'WARN', 'income', 'FEATURE_DRIFT', startTime, endTime).subscribe(alerts => {
+      expect(alerts).toEqual(mockAlerts);
+    });
+
+    const req = httpMock.expectOne(
+      (request) => request.url === 'http://127.0.0.1:8080/api/projects/123/alerts' &&
+        request.params.get('status') === 'OPEN' &&
+        request.params.get('severity') === 'WARN' &&
+        request.params.get('feature_name') === 'income' &&
+        request.params.get('alert_type') === 'FEATURE_DRIFT' &&
+        request.params.get('start_time') === startTime &&
+        request.params.get('end_time') === endTime
+    );
+    expect(req.request.method).toBe('GET');
+    req.flush(mockAlerts);
+  });
+
+  it('should list alerts with feature name filter', () => {
+    const mockAlerts: Alert[] = [];
+
+    service.listAlerts('123', undefined, undefined, 'income').subscribe(alerts => {
+      expect(alerts).toEqual(mockAlerts);
+    });
+
+    const req = httpMock.expectOne('http://127.0.0.1:8080/api/projects/123/alerts?feature_name=income');
+    expect(req.request.method).toBe('GET');
+    req.flush(mockAlerts);
+  });
+
+  it('should list alerts with alert type filter', () => {
+    const mockAlerts: Alert[] = [];
+
+    service.listAlerts('123', undefined, undefined, undefined, 'FEATURE_DRIFT').subscribe(alerts => {
+      expect(alerts).toEqual(mockAlerts);
+    });
+
+    const req = httpMock.expectOne('http://127.0.0.1:8080/api/projects/123/alerts?alert_type=FEATURE_DRIFT');
     expect(req.request.method).toBe('GET');
     req.flush(mockAlerts);
   });

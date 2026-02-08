@@ -5,8 +5,16 @@ module.exports = {
   collectCoverage: false,
   coverageReporters: ['html', 'text-summary', 'lcov'],
   coverageDirectory: 'coverage',
+  coveragePathIgnorePatterns: [
+    '/node_modules/',
+    '/dist/',
+    '/coverage/',
+    '\\.spec\\.ts$',
+    'setup-jest.ts',
+    'jest-globals.d.ts'
+  ],
   moduleNameMapper: {
-    '^@/(.*)$': '<rootDir>/src/$1',
+    '^@/(.*)$': '<rootDir>/src/$1'
   },
   transformIgnorePatterns: [
     'node_modules/(?!.*\\.mjs$|@angular|@ngrx|rxjs)'
@@ -21,5 +29,13 @@ module.exports = {
       },
     ],
   },
+  globals: {
+    'ts-jest': {
+      tsconfig: '<rootDir>/tsconfig.spec.json',
+      stringifyContentPathRegex: '\\.html$',
+    },
+  },
+  maxWorkers: process.env.CI ? 2 : '50%',
+  testTimeout: 10000,
 };
 
