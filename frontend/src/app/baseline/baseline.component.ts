@@ -5,7 +5,9 @@ import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTableModule } from '@angular/material/table';
+import { MatChipsModule } from '@angular/material/chips';
 import { BaselineService, BaselineMetadata } from '../services/baseline.service';
 
 @Component({
@@ -18,78 +20,12 @@ import { BaselineService, BaselineMetadata } from '../services/baseline.service'
     MatButtonModule,
     MatIconModule,
     MatProgressBarModule,
-    MatTableModule
+    MatProgressSpinnerModule,
+    MatTableModule,
+    MatChipsModule
   ],
-  template: `
-    <div>
-      <button mat-button (click)="goBack()">
-        <mat-icon>arrow_back</mat-icon>
-        Back to Projects
-      </button>
-      
-      <h1>Baseline Upload</h1>
-      
-      <mat-card style="margin-bottom: 20px;">
-        <mat-card-header>
-          <mat-card-title>Upload Baseline CSV</mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
-          <input type="file" accept=".csv" (change)="onFileSelected($event)" #fileInput style="display: none;">
-          <button mat-raised-button color="primary" (click)="fileInput.click()">
-            <mat-icon>upload</mat-icon>
-            Select CSV File
-          </button>
-          <span *ngIf="selectedFile" style="margin-left: 10px;">{{ selectedFile.name }}</span>
-          <br><br>
-          <button mat-raised-button color="accent" (click)="uploadBaseline()" [disabled]="!selectedFile || uploading">
-            <mat-icon>cloud_upload</mat-icon>
-            Upload Baseline
-          </button>
-          <mat-progress-bar *ngIf="uploading" mode="indeterminate"></mat-progress-bar>
-        </mat-card-content>
-      </mat-card>
-
-      <mat-card *ngIf="baseline">
-        <mat-card-header>
-          <mat-card-title>Baseline Summary</mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
-          <p><strong>Version:</strong> {{ baseline.baseline_version }}</p>
-          <p><strong>Prediction Rate:</strong> {{ baseline.prediction_rate | number:'1.2-4' }}</p>
-          <p><strong>Created:</strong> {{ baseline.created_at | date:'short' }}</p>
-          
-          <h3>Features ({{ baseline.features.length }})</h3>
-          <table mat-table [dataSource]="baseline.features" class="mat-elevation-z2">
-            <ng-container matColumnDef="name">
-              <th mat-header-cell *matHeaderCellDef>Feature Name</th>
-              <td mat-cell *matCellDef="let feature">{{ feature.name }}</td>
-            </ng-container>
-            
-            <ng-container matColumnDef="type">
-              <th mat-header-cell *matHeaderCellDef>Type</th>
-              <td mat-cell *matCellDef="let feature">{{ feature.feature_type }}</td>
-            </ng-container>
-            
-            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-          </table>
-          
-          <div style="margin-top: 20px;">
-            <button mat-raised-button color="primary" [routerLink]="['/projects', projectId, 'incoming']">
-              <mat-icon>cloud_upload</mat-icon>
-              Upload Incoming Data
-            </button>
-          </div>
-        </mat-card-content>
-      </mat-card>
-    </div>
-  `,
-  styles: [`
-    table {
-      width: 100%;
-      margin-top: 10px;
-    }
-  `]
+  templateUrl: './baseline.component.html',
+  styleUrls: ['./baseline.component.scss']
 })
 export class BaselineComponent implements OnInit {
   projectId = '';
@@ -97,6 +33,7 @@ export class BaselineComponent implements OnInit {
   uploading = false;
   baseline: BaselineMetadata | null = null;
   displayedColumns = ['name', 'type'];
+  loading = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -111,6 +48,19 @@ export class BaselineComponent implements OnInit {
 
   onFileSelected(event: any) {
     this.selectedFile = event.target.files[0];
+  }
+
+  clearFile(event: Event) {
+    event.stopPropagation();
+    this.selectedFile = null;
+  }
+
+  formatFileSize(bytes: number): string {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
   }
 
   uploadBaseline() {
@@ -139,15 +89,17 @@ export class BaselineComponent implements OnInit {
       return;
     }
 
+    this.loading = true;
     this.baselineService.getBaseline(this.projectId).subscribe({
       next: (baseline) => {
         this.baseline = baseline;
+        this.loading = false;
       },
       error: (err) => {
         if (err.status !== 404) {
           console.error('Failed to load baseline:', err);
         }
-        // 404 is expected if no baseline exists yet
+        this.loading = false;
       }
     });
   }

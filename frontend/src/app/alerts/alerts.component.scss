@@ -1,0 +1,287 @@
+.alerts-container {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.page-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.back-button {
+  margin-right: 8px;
+}
+
+.page-title {
+  font-size: 36px;
+  font-weight: 700;
+  margin: 0 0 8px 0;
+  color: #1a1a1a;
+  letter-spacing: -0.5px;
+}
+
+.page-subtitle {
+  font-size: 16px;
+  color: rgba(0, 0, 0, 0.6);
+  margin: 0;
+}
+
+.filters-card {
+  margin-bottom: 24px;
+}
+
+.filters-container {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.filter-field {
+  flex: 1;
+  min-width: 200px;
+}
+
+.clear-button {
+  height: 56px;
+}
+
+.alerts-summary {
+  margin-bottom: 24px;
+}
+
+.summary-card mat-card-content {
+  display: flex;
+  gap: 32px;
+  flex-wrap: wrap;
+  padding: 24px !important;
+}
+
+.summary-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex: 1;
+  min-width: 150px;
+}
+
+.summary-icon {
+  font-size: 40px;
+  width: 40px;
+  height: 40px;
+  color: #2196f3;
+}
+
+.summary-icon.critical {
+  color: #f44336;
+}
+
+.summary-icon.warning {
+  color: #ff9800;
+}
+
+.summary-value {
+  font-size: 32px;
+  font-weight: 700;
+  color: #1a1a1a;
+  line-height: 1;
+}
+
+.summary-label {
+  font-size: 14px;
+  color: rgba(0, 0, 0, 0.6);
+  margin-top: 4px;
+}
+
+.loading-container,
+.empty-state {
+  text-align: center;
+  padding: 64px 24px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.empty-icon {
+  font-size: 64px;
+  width: 64px;
+  height: 64px;
+  color: rgba(0, 0, 0, 0.3);
+  margin-bottom: 16px;
+}
+
+.empty-state h3 {
+  margin: 0 0 8px 0;
+  color: #1a1a1a;
+}
+
+.empty-state p {
+  color: rgba(0, 0, 0, 0.6);
+  margin: 0;
+}
+
+.alerts-table-card {
+  overflow-x: auto;
+}
+
+.table-container {
+  overflow-x: auto;
+}
+
+.alerts-table {
+  width: 100%;
+}
+
+.alert-row {
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.alert-row:hover {
+  background-color: rgba(0, 0, 0, 0.02);
+}
+
+.time-cell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.time-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+  color: rgba(0, 0, 0, 0.54);
+}
+
+.severity-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.chip-icon {
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
+}
+
+.type-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 12px;
+  background-color: rgba(0, 0, 0, 0.05);
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.message-cell {
+  max-width: 300px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.metric-value {
+  font-family: "Courier New", monospace;
+  font-weight: 600;
+  color: #2196f3;
+}
+
+.status-chip {
+  &.open {
+    background-color: rgba(33, 150, 243, 0.1);
+    color: #2196f3;
+  }
+
+  &.ack {
+    background-color: rgba(76, 175, 80, 0.1);
+    color: #4caf50;
+  }
+}
+
+.actions-cell {
+  display: flex;
+  gap: 8px;
+}
+
+.action-button {
+  transition: transform 0.2s ease;
+}
+
+.action-button:hover {
+  transform: scale(1.1);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .page-title {
+    font-size: 28px;
+  }
+
+  .filters-container {
+    flex-direction: column;
+  }
+
+  .filter-field {
+    width: 100%;
+  }
+
+  .clear-button {
+    width: 100%;
+  }
+
+  .summary-card mat-card-content {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .summary-item {
+    width: 100%;
+  }
+
+  .alerts-table {
+    display: block;
+  }
+
+  .mat-mdc-header-row,
+  .mat-mdc-row {
+    display: block;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+    padding: 16px 0;
+  }
+
+  .mat-mdc-cell,
+  .mat-mdc-header-cell {
+    display: block;
+    text-align: right;
+    padding: 8px 0;
+    border: none;
+  }
+
+  .mat-mdc-header-cell {
+    display: none;
+  }
+
+  .mat-mdc-cell::before {
+    content: attr(data-label);
+    float: left;
+    font-weight: 600;
+    color: rgba(0, 0, 0, 0.54);
+  }
+
+  .actions-cell {
+    justify-content: flex-end;
+  }
+}
+

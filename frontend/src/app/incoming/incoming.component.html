@@ -1,0 +1,125 @@
+<div class="incoming-container">
+  <div class="page-header">
+    <button mat-icon-button (click)="goBack()" class="back-button">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <div>
+      <h1 class="page-title">Incoming Data Upload</h1>
+      <p class="page-subtitle">Upload and analyze incoming data for drift detection</p>
+    </div>
+  </div>
+  
+  <mat-card class="upload-card">
+    <mat-card-header>
+      <mat-card-title>
+        <mat-icon>cloud_upload</mat-icon>
+        Upload Incoming CSV
+      </mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="upload-section">
+        <input type="file" accept=".csv" (change)="onFileSelected($event)" #fileInput style="display: none;">
+        
+        <div class="file-input-area" (click)="fileInput.click()" [class.has-file]="selectedFile">
+          <mat-icon class="upload-icon">upload_file</mat-icon>
+          <div *ngIf="!selectedFile" class="upload-text">
+            <p class="upload-title">Click to select a CSV file</p>
+            <p class="upload-subtitle">or drag and drop it here</p>
+          </div>
+          <div *ngIf="selectedFile" class="file-info">
+            <mat-icon class="file-icon">description</mat-icon>
+            <div class="file-details">
+              <p class="file-name">{{ selectedFile.name }}</p>
+              <p class="file-size">{{ formatFileSize(selectedFile.size) }}</p>
+            </div>
+            <button mat-icon-button (click)="clearFile($event)" class="remove-button">
+              <mat-icon>close</mat-icon>
+            </button>
+          </div>
+        </div>
+
+        <div class="upload-actions">
+          <button mat-raised-button color="primary" (click)="uploadIncoming()" [disabled]="!selectedFile || uploading" class="upload-button">
+            <mat-spinner *ngIf="uploading" diameter="20" class="button-spinner"></mat-spinner>
+            <mat-icon *ngIf="!uploading">analytics</mat-icon>
+            <span>{{ uploading ? 'Analyzing...' : 'Upload & Analyze' }}</span>
+          </button>
+        </div>
+
+        <mat-progress-bar *ngIf="uploading" mode="indeterminate" class="progress-bar"></mat-progress-bar>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card *ngIf="uploadResult" class="results-card">
+    <mat-card-header>
+      <mat-card-title>
+        <mat-icon>assessment</mat-icon>
+        Analysis Results
+      </mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="results-grid">
+        <div class="result-item">
+          <div class="result-icon-wrapper success">
+            <mat-icon>check_circle</mat-icon>
+          </div>
+          <div class="result-content">
+            <div class="result-label">Rows Processed</div>
+            <div class="result-value">{{ uploadResult.rows_processed | number }}</div>
+          </div>
+        </div>
+
+        <div class="result-item" [class.warning]="uploadResult.alerts_created > 0">
+          <div class="result-icon-wrapper" [class.warning]="uploadResult.alerts_created > 0">
+            <mat-icon>{{ uploadResult.alerts_created > 0 ? 'warning' : 'notifications_off' }}</mat-icon>
+          </div>
+          <div class="result-content">
+            <div class="result-label">Alerts Created</div>
+            <div class="result-value">{{ uploadResult.alerts_created | number }}</div>
+          </div>
+        </div>
+
+        <div class="result-item" [class]="getHealthClass(uploadResult.health)">
+          <div class="result-icon-wrapper" [class]="getHealthClass(uploadResult.health)">
+            <mat-icon>{{ getHealthIcon(uploadResult.health) }}</mat-icon>
+          </div>
+          <div class="result-content">
+            <div class="result-label">Health Status</div>
+            <div class="result-value">
+              <mat-chip [color]="getHealthColor(uploadResult.health)" class="health-chip">
+                {{ uploadResult.health }}
+              </mat-chip>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="result-actions">
+        <button mat-raised-button color="primary" [routerLink]="['/projects', projectId, 'alerts']" class="view-alerts-button" *ngIf="uploadResult.alerts_created > 0">
+          <mat-icon>notifications</mat-icon>
+          <span>View {{ uploadResult.alerts_created }} Alert{{ uploadResult.alerts_created !== 1 ? 's' : '' }}</span>
+        </button>
+        <button mat-stroked-button (click)="resetUpload()" class="reset-button">
+          <mat-icon>refresh</mat-icon>
+          <span>Upload Another File</span>
+        </button>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <div *ngIf="!uploadResult && !uploading" class="info-card">
+    <mat-card>
+      <mat-card-content>
+        <div class="info-content">
+          <mat-icon class="info-icon">info</mat-icon>
+          <div>
+            <h3>Ready to analyze</h3>
+            <p>Upload an incoming CSV file to compare against your baseline and detect data drift.</p>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>
+

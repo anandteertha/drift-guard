@@ -1,0 +1,52 @@
+<h2 mat-dialog-title>
+  <mat-icon>info</mat-icon>
+  Alert Details
+</h2>
+<mat-dialog-content>
+  <div class="detail-section">
+    <div class="detail-item">
+      <strong>Alert ID:</strong>
+      <span>{{ data.alert_id }}</span>
+    </div>
+    <div class="detail-item">
+      <strong>Type:</strong>
+      <span>{{ data.alert_type }}</span>
+    </div>
+    <div class="detail-item">
+      <strong>Severity:</strong>
+      <mat-chip [color]="getSeverityColor(data.severity)">
+        {{ data.severity }}
+      </mat-chip>
+    </div>
+    <div class="detail-item">
+      <strong>Status:</strong>
+      <mat-chip [class]="'status-chip ' + data.status.toLowerCase()">
+        {{ data.status }}
+      </mat-chip>
+    </div>
+    <div class="detail-item">
+      <strong>Feature:</strong>
+      <span>{{ data.feature_name || "N/A" }}</span>
+    </div>
+    <div class="detail-item">
+      <strong>Metric Value:</strong>
+      <span class="metric-value">{{ data.metric_value !== null ? data.metric_value.toFixed(4) : "N/A" }}</span>
+    </div>
+    <div class="detail-item">
+      <strong>Baseline Version:</strong>
+      <span>{{ data.baseline_version }}</span>
+    </div>
+    <div class="detail-item">
+      <strong>Created:</strong>
+      <span>{{ data.created_at | date: "medium" }}</span>
+    </div>
+    <div class="detail-item full-width">
+      <strong>Message:</strong>
+      <p class="message-text">{{ data.message }}</p>
+    </div>
+  </div>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Close</button>
+</mat-dialog-actions>
+

@@ -1,0 +1,79 @@
+<div class="projects-container">
+  <div class="page-header">
+    <h1 class="page-title">Projects</h1>
+    <p class="page-subtitle">Manage your data drift monitoring projects</p>
+  </div>
+  
+  <mat-card class="create-card">
+    <mat-card-header>
+      <mat-card-title>
+        <mat-icon>add_circle</mat-icon>
+        Create New Project
+      </mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <form (ngSubmit)="createProject()" class="create-form">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Project Name</mat-label>
+          <input matInput [(ngModel)]="newProjectName" name="projectName" placeholder="Enter a descriptive project name" required>
+          <mat-icon matPrefix>folder</mat-icon>
+        </mat-form-field>
+        <button mat-raised-button color="primary" type="submit" [disabled]="!newProjectName || creating" class="create-button">
+          <mat-icon *ngIf="!creating">add</mat-icon>
+          <mat-spinner *ngIf="creating" diameter="20" class="button-spinner"></mat-spinner>
+          <span>{{ creating ? 'Creating...' : 'Create Project' }}</span>
+        </button>
+      </form>
+    </mat-card-content>
+  </mat-card>
+
+  <div class="projects-section">
+    <div class="section-header">
+      <h2 class="section-title">All Projects</h2>
+      <mat-chip *ngIf="projects.length > 0" class="count-chip">{{ projects.length }} {{ projects.length === 1 ? 'project' : 'projects' }}</mat-chip>
+    </div>
+
+    <div *ngIf="loading" class="loading-container">
+      <mat-spinner></mat-spinner>
+      <p>Loading projects...</p>
+    </div>
+
+    <div *ngIf="!loading && projects.length === 0" class="empty-state">
+      <mat-icon class="empty-icon">folder_open</mat-icon>
+      <h3>No projects yet</h3>
+      <p>Create your first project to start monitoring data drift</p>
+    </div>
+
+    <div class="projects-grid" *ngIf="!loading && projects.length > 0">
+      <mat-card class="project-card" *ngFor="let project of projects">
+        <mat-card-header>
+          <div class="project-icon-wrapper">
+            <mat-icon>folder</mat-icon>
+          </div>
+          <mat-card-title class="project-name">{{ project.name }}</mat-card-title>
+          <mat-card-subtitle class="project-date">
+            <mat-icon class="date-icon">calendar_today</mat-icon>
+            Created {{ project.created_at | date:'mediumDate' }}
+          </mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="project-actions">
+            <button mat-raised-button color="primary" [routerLink]="['/projects', project.project_id, 'baseline']" class="action-button">
+              <mat-icon>upload</mat-icon>
+              <span>Baseline</span>
+            </button>
+            <button mat-raised-button color="accent" [routerLink]="['/projects', project.project_id, 'incoming']" class="action-button">
+              <mat-icon>cloud_upload</mat-icon>
+              <span>Incoming</span>
+            </button>
+            <button mat-raised-button [routerLink]="['/projects', project.project_id, 'alerts']" class="action-button alerts-button">
+              <mat-icon>notifications</mat-icon>
+              <span>Alerts</span>
+            </button>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+</div>
+

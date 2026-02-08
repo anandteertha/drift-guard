@@ -7,7 +7,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
-import { MatListModule } from '@angular/material/list';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ProjectsService, Project } from '../services/projects.service';
 
 @Component({
@@ -22,56 +23,17 @@ import { ProjectsService, Project } from '../services/projects.service';
     MatInputModule,
     MatFormFieldModule,
     MatIconModule,
-    MatListModule
+    MatChipsModule,
+    MatProgressSpinnerModule
   ],
-  template: `
-    <div>
-      <h1>Projects</h1>
-      
-      <mat-card style="margin-bottom: 20px;">
-        <mat-card-header>
-          <mat-card-title>Create New Project</mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
-          <mat-form-field appearance="outline" style="width: 100%;">
-            <mat-label>Project Name</mat-label>
-            <input matInput [(ngModel)]="newProjectName" placeholder="Enter project name">
-          </mat-form-field>
-          <button mat-raised-button color="primary" (click)="createProject()" [disabled]="!newProjectName">
-            Create Project
-          </button>
-        </mat-card-content>
-      </mat-card>
-
-      <mat-card>
-        <mat-card-header>
-          <mat-card-title>All Projects</mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
-          <mat-list>
-            <mat-list-item *ngFor="let project of projects">
-              <mat-icon matListItemIcon>folder</mat-icon>
-              <div matListItemTitle>{{ project.name }}</div>
-              <div matListItemLine>{{ project.created_at | date:'short' }}</div>
-              <button mat-icon-button [routerLink]="['/projects', project.project_id, 'baseline']" matListItemMeta title="Upload Baseline">
-                <mat-icon>upload</mat-icon>
-              </button>
-              <button mat-icon-button [routerLink]="['/projects', project.project_id, 'incoming']" matListItemMeta title="Upload Incoming">
-                <mat-icon>cloud_upload</mat-icon>
-              </button>
-              <button mat-icon-button [routerLink]="['/projects', project.project_id, 'alerts']" matListItemMeta title="View Alerts">
-                <mat-icon>notifications</mat-icon>
-              </button>
-            </mat-list-item>
-          </mat-list>
-        </mat-card-content>
-      </mat-card>
-    </div>
-  `
+  templateUrl: './projects.component.html',
+  styleUrls: ['./projects.component.scss']
 })
 export class ProjectsComponent implements OnInit {
   projects: Project[] = [];
   newProjectName = '';
+  creating = false;
+  loading = true;
 
   constructor(
     private projectsService: ProjectsService,
@@ -83,28 +45,34 @@ export class ProjectsComponent implements OnInit {
   }
 
   loadProjects() {
+    this.loading = true;
     this.projectsService.listProjects().subscribe({
       next: (projects) => {
         this.projects = projects;
+        this.loading = false;
       },
       error: (err) => {
         console.error('Failed to load projects:', err);
+        this.loading = false;
       }
     });
   }
 
   createProject() {
-    if (!this.newProjectName.trim()) {
+    if (!this.newProjectName.trim() || this.creating) {
       return;
     }
 
+    this.creating = true;
     this.projectsService.createProject(this.newProjectName).subscribe({
       next: (project) => {
         this.newProjectName = '';
+        this.creating = false;
         this.loadProjects();
       },
       error: (err) => {
         console.error('Failed to create project:', err);
+        this.creating = false;
         alert('Failed to create project: ' + (err.error?.error || err.message));
       }
     });

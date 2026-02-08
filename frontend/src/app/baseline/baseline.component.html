@@ -1,0 +1,133 @@
+<div class="baseline-container">
+  <div class="page-header">
+    <button mat-icon-button (click)="goBack()" class="back-button">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <div>
+      <h1 class="page-title">Baseline Upload</h1>
+      <p class="page-subtitle">Upload your baseline dataset to establish monitoring standards</p>
+    </div>
+  </div>
+  
+  <mat-card class="upload-card">
+    <mat-card-header>
+      <mat-card-title>
+        <mat-icon>cloud_upload</mat-icon>
+        Upload Baseline CSV
+      </mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="upload-section">
+        <input type="file" accept=".csv" (change)="onFileSelected($event)" #fileInput style="display: none;">
+        
+        <div class="file-input-area" (click)="fileInput.click()" [class.has-file]="selectedFile">
+          <mat-icon class="upload-icon">upload_file</mat-icon>
+          <div *ngIf="!selectedFile" class="upload-text">
+            <p class="upload-title">Click to select a CSV file</p>
+            <p class="upload-subtitle">or drag and drop it here</p>
+          </div>
+          <div *ngIf="selectedFile" class="file-info">
+            <mat-icon class="file-icon">description</mat-icon>
+            <div class="file-details">
+              <p class="file-name">{{ selectedFile.name }}</p>
+              <p class="file-size">{{ formatFileSize(selectedFile.size) }}</p>
+            </div>
+            <button mat-icon-button (click)="clearFile($event)" class="remove-button">
+              <mat-icon>close</mat-icon>
+            </button>
+          </div>
+        </div>
+
+        <div class="upload-actions">
+          <button mat-raised-button color="primary" (click)="uploadBaseline()" [disabled]="!selectedFile || uploading" class="upload-button">
+            <mat-spinner *ngIf="uploading" diameter="20" class="button-spinner"></mat-spinner>
+            <mat-icon *ngIf="!uploading">cloud_upload</mat-icon>
+            <span>{{ uploading ? 'Uploading...' : 'Upload Baseline' }}</span>
+          </button>
+        </div>
+
+        <mat-progress-bar *ngIf="uploading" mode="indeterminate" class="progress-bar"></mat-progress-bar>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card *ngIf="baseline" class="summary-card">
+    <mat-card-header>
+      <mat-card-title>
+        <mat-icon>assessment</mat-icon>
+        Baseline Summary
+      </mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="summary-grid">
+        <div class="summary-item">
+          <mat-icon class="summary-icon">label</mat-icon>
+          <div>
+            <div class="summary-label">Version</div>
+            <div class="summary-value">{{ baseline.baseline_version }}</div>
+          </div>
+        </div>
+        <div class="summary-item">
+          <mat-icon class="summary-icon">trending_up</mat-icon>
+          <div>
+            <div class="summary-label">Prediction Rate</div>
+            <div class="summary-value">{{ baseline.prediction_rate | number:'1.2-4' }}</div>
+          </div>
+        </div>
+        <div class="summary-item">
+          <mat-icon class="summary-icon">calendar_today</mat-icon>
+          <div>
+            <div class="summary-label">Created</div>
+            <div class="summary-value">{{ baseline.created_at | date:'mediumDate' }}</div>
+          </div>
+        </div>
+        <div class="summary-item">
+          <mat-icon class="summary-icon">category</mat-icon>
+          <div>
+            <div class="summary-label">Features</div>
+            <div class="summary-value">{{ baseline.features.length }}</div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="features-section">
+        <h3 class="features-title">
+          <mat-icon>list</mat-icon>
+          Features ({{ baseline.features.length }})
+        </h3>
+        <div class="table-container">
+          <table mat-table [dataSource]="baseline.features" class="features-table">
+            <ng-container matColumnDef="name">
+              <th mat-header-cell *matHeaderCellDef>Feature Name</th>
+              <td mat-cell *matCellDef="let feature" data-label="Feature Name">{{ feature.name }}</td>
+            </ng-container>
+            
+            <ng-container matColumnDef="type">
+              <th mat-header-cell *matHeaderCellDef>Type</th>
+              <td mat-cell *matCellDef="let feature" data-label="Type">
+                <mat-chip class="type-chip">{{ feature.feature_type }}</mat-chip>
+              </td>
+            </ng-container>
+            
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+          </table>
+        </div>
+      </div>
+      
+      <div class="next-step">
+        <button mat-raised-button color="primary" [routerLink]="['/projects', projectId, 'incoming']" class="next-button">
+          <mat-icon>arrow_forward</mat-icon>
+          <span>Upload Incoming Data</span>
+        </button>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <div *ngIf="!baseline && !loading" class="empty-state">
+    <mat-icon class="empty-icon">cloud_upload</mat-icon>
+    <h3>No baseline uploaded</h3>
+    <p>Upload a baseline CSV file to get started with drift monitoring</p>
+  </div>
+</div>
+

@@ -1,0 +1,107 @@
+.app-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.app-toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.toolbar-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.logo-icon {
+  font-size: 28px;
+  width: 28px;
+  height: 28px;
+}
+
+.title-text {
+  letter-spacing: -0.5px;
+}
+
+.spacer {
+  flex: 1 1 auto;
+}
+
+.menu-button {
+  margin-right: 8px;
+}
+
+.desktop-nav {
+  display: flex;
+  gap: 8px;
+}
+
+.desktop-nav button {
+  border-radius: 8px;
+}
+
+.desktop-nav button.active {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.mobile-only {
+  display: none;
+}
+
+.desktop-only {
+  display: flex;
+}
+
+.sidenav-container {
+  flex: 1;
+  overflow: auto;
+}
+
+.sidenav {
+  width: 250px;
+  background: #fff;
+}
+
+.sidenav mat-nav-list a.active {
+  background-color: rgba(33, 150, 243, 0.1);
+  color: #2196f3;
+}
+
+.main-content {
+  padding: 24px 0;
+  min-height: calc(100vh - 64px);
+}
+
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 24px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+@media (max-width: 768px) {
+  .mobile-only {
+    display: block;
+  }
+
+  .desktop-only {
+    display: none;
+  }
+
+  .container {
+    padding: 0 16px;
+  }
+
+  .main-content {
+    padding: 16px 0;
+  }
+}
+
