@@ -1,0 +1,11 @@
+<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Shield base - professional solid color -->
+  <path d="M16 2L4 7V16C4 22.5 9.5 27.5 16 30C22.5 27.5 28 22.5 28 16V7L16 2Z" fill="#1976d2" stroke="#0d47a1" stroke-width="1"/>
+  <!-- Data waves representing drift detection -->
+  <path d="M10 14C10 14 12 12 16 12C20 12 22 14 22 14" stroke="white" stroke-width="2" stroke-linecap="round" opacity="0.95"/>
+  <path d="M8 18C8 18 11 16 16 16C21 16 24 18 24 18" stroke="white" stroke-width="2" stroke-linecap="round" opacity="0.95"/>
+  <path d="M10 22C10 22 12 20 16 20C20 20 22 22 22 22" stroke="white" stroke-width="2" stroke-linecap="round" opacity="0.95"/>
+  <!-- Alert indicator dot -->
+  <circle cx="22" cy="10" r="3" fill="#f44336" stroke="white" stroke-width="1.5"/>
+</svg>
+

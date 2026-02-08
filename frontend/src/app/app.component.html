@@ -4,7 +4,7 @@
       <mat-icon>menu</mat-icon>
     </button>
     <div class="toolbar-title">
-      <mat-icon class="logo-icon">security</mat-icon>
+      <img src="assets/logo.svg" alt="DriftGuard Logo" class="logo-svg" />
       <span class="title-text">DriftGuard</span>
     </div>
     <span class="spacer"></span>
@@ -13,7 +13,13 @@
         <mat-icon>folder</mat-icon>
         <span>Projects</span>
       </button>
+      <button mat-icon-button (click)="openNotifications()" class="notifications-button" matTooltip="Notifications">
+        <mat-icon [matBadge]="openAlertsCount > 0 ? openAlertsCount : null" [matBadgeHidden]="openAlertsCount === 0" matBadgeColor="warn">notifications</mat-icon>
+      </button>
     </div>
+    <button mat-icon-button (click)="openNotifications()" class="notifications-button mobile-only" matTooltip="Notifications">
+      <mat-icon [matBadge]="openAlertsCount > 0 ? openAlertsCount : null" [matBadgeHidden]="openAlertsCount === 0" matBadgeColor="warn">notifications</mat-icon>
+    </button>
   </mat-toolbar>
 
   <mat-sidenav-container class="sidenav-container">
