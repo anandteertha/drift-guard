@@ -1,7 +1,7 @@
 use drift_guard_backend::storage::projects;
 use sqlx::sqlite::SqlitePoolOptions;
 
-#[sqlx::test]
+#[tokio::test]
 async fn test_create_project() {
     let pool = SqlitePoolOptions::new()
         .max_connections(1)
@@ -10,18 +10,17 @@ async fn test_create_project() {
         .unwrap();
 
     // Run migrations
-    sqlx::migrate!("./migrations")
-        .run(&pool)
+    sqlx::migrate!("./migrations").run(&pool).await.unwrap();
+
+    let project = projects::create_project(&pool, "Test Project")
         .await
         .unwrap();
 
-    let project = projects::create_project(&pool, "Test Project").await.unwrap();
-    
     assert_eq!(project.name, "Test Project");
     assert!(!project.project_id.is_empty());
 }
 
-#[sqlx::test]
+#[tokio::test]
 async fn test_list_projects() {
     let pool = SqlitePoolOptions::new()
         .max_connections(1)
@@ -29,10 +28,7 @@ async fn test_list_projects() {
         .await
         .unwrap();
 
-    sqlx::migrate!("./migrations")
-        .run(&pool)
-        .await
-        .unwrap();
+    sqlx::migrate!("./migrations").run(&pool).await.unwrap();
 
     projects::create_project(&pool, "Project 1").await.unwrap();
     projects::create_project(&pool, "Project 2").await.unwrap();

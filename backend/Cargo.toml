@@ -23,4 +23,6 @@ thiserror = "1.0"
 futures-util = "0.3"
 
 [dev-dependencies]
+sqlx = { version = "0.7", features = ["runtime-tokio", "sqlite", "migrate"] }
+tokio = { version = "1.35", features = ["full"] }
 

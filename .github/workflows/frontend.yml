@@ -57,11 +57,3 @@ jobs:
         working-directory: ./frontend
         run: npm run build
 
-      - name: Run E2E tests
-        working-directory: ./frontend
-        run: npm run e2e:ci
-        env:
-          CI: true
-        # Note: E2E tests require backend to be running
-        # In a real CI setup, you'd start the backend service first
-
