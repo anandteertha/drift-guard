@@ -24,10 +24,7 @@ pub async fn list_projects(pool: web::Data<SqlitePool>) -> impl Responder {
     }
 }
 
-pub async fn get_project(
-    pool: web::Data<SqlitePool>,
-    path: web::Path<String>,
-) -> impl Responder {
+pub async fn get_project(pool: web::Data<SqlitePool>, path: web::Path<String>) -> impl Responder {
     let project_id = path.into_inner();
     match projects::get_project(&pool, &project_id).await {
         Ok(Some(project)) => HttpResponse::Ok().json(project),
@@ -39,4 +36,3 @@ pub async fn get_project(
         })),
     }
 }
-

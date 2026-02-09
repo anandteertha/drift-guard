@@ -20,10 +20,8 @@ pub async fn generate_alerts(
     let mut max_severity = "OK".to_string();
 
     // Schema validation
-    let baseline_feature_names: std::collections::HashSet<String> = baseline_features
-        .iter()
-        .map(|f| f.name.clone())
-        .collect();
+    let baseline_feature_names: std::collections::HashSet<String> =
+        baseline_features.iter().map(|f| f.name.clone()).collect();
 
     let incoming_feature_names: std::collections::HashSet<String> = incoming_headers
         .iter()
@@ -165,7 +163,7 @@ mod tests {
         // Test feature drift severity
         let warn_drift = 0.15;
         let critical_drift = 0.25;
-        
+
         assert!(warn_drift >= FEATURE_DRIFT_WARN_THRESHOLD);
         assert!(warn_drift < FEATURE_DRIFT_CRITICAL_THRESHOLD);
         assert!(critical_drift >= FEATURE_DRIFT_CRITICAL_THRESHOLD);
@@ -173,7 +171,7 @@ mod tests {
         // Test prediction shift severity
         let warn_shift = 0.15;
         let critical_shift = 0.25;
-        
+
         assert!(warn_shift >= PREDICTION_SHIFT_WARN_THRESHOLD);
         assert!(warn_shift < PREDICTION_SHIFT_CRITICAL_THRESHOLD);
         assert!(critical_shift >= PREDICTION_SHIFT_CRITICAL_THRESHOLD);

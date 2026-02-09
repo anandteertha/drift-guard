@@ -72,7 +72,9 @@ pub async fn upload_baseline(
                             name: fs.name.clone(),
                             feature_type: match fs.feature_type {
                                 crate::models::FeatureType::Numeric => "numeric".to_string(),
-                                crate::models::FeatureType::Categorical => "categorical".to_string(),
+                                crate::models::FeatureType::Categorical => {
+                                    "categorical".to_string()
+                                }
                             },
                             metadata,
                         }
@@ -96,10 +98,7 @@ pub async fn upload_baseline(
     }
 }
 
-pub async fn get_baseline(
-    pool: web::Data<SqlitePool>,
-    path: web::Path<String>,
-) -> impl Responder {
+pub async fn get_baseline(pool: web::Data<SqlitePool>, path: web::Path<String>) -> impl Responder {
     let project_id = path.into_inner();
 
     match baselines::get_latest_baseline(&pool, &project_id).await {
@@ -141,4 +140,3 @@ pub async fn get_baseline(
         })),
     }
 }
-

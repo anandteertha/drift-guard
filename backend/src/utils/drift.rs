@@ -1,10 +1,7 @@
-use crate::models::{FeatureStats, FeatureStatsData, NumericStats, CategoricalStats};
+use crate::models::{CategoricalStats, FeatureStats, FeatureStatsData, NumericStats};
 use std::collections::HashMap;
 
-pub fn compute_feature_drift(
-    baseline_stats: &FeatureStats,
-    incoming_values: &[String],
-) -> f64 {
+pub fn compute_feature_drift(baseline_stats: &FeatureStats, incoming_values: &[String]) -> f64 {
     match &baseline_stats.stats {
         FeatureStatsData::Numeric(baseline_numeric) => {
             compute_numeric_drift(baseline_numeric, incoming_values)
@@ -63,10 +60,7 @@ fn compute_numeric_drift(baseline: &NumericStats, incoming_values: &[String]) ->
     l1_distance / 2.0
 }
 
-fn compute_categorical_drift(
-    baseline: &CategoricalStats,
-    incoming_values: &[String],
-) -> f64 {
+fn compute_categorical_drift(baseline: &CategoricalStats, incoming_values: &[String]) -> f64 {
     // Count incoming frequencies
     let mut incoming_counts: HashMap<String, usize> = HashMap::new();
     let mut total = 0;
@@ -116,7 +110,9 @@ pub fn compute_prediction_shift(baseline_rate: f64, incoming_rate: f64) -> f64 {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::models::{FeatureStats, FeatureStatsData, FeatureType, NumericStats, CategoricalStats};
+    use crate::models::{
+        CategoricalStats, FeatureStats, FeatureStatsData, FeatureType, NumericStats,
+    };
 
     #[test]
     fn test_compute_prediction_shift() {
@@ -132,9 +128,16 @@ mod tests {
         };
 
         // Same distribution
-        let incoming = vec!["5".to_string(), "5".to_string(), "15".to_string(), "15".to_string(), "15".to_string(), "25".to_string()];
+        let incoming = vec![
+            "5".to_string(),
+            "5".to_string(),
+            "15".to_string(),
+            "15".to_string(),
+            "15".to_string(),
+            "25".to_string(),
+        ];
         let drift = compute_numeric_drift(&baseline, &incoming);
-        
+
         // Should have some drift but not extreme
         assert!(drift >= 0.0 && drift <= 1.0);
     }
@@ -149,7 +152,7 @@ mod tests {
         // Completely different - all in last bin
         let incoming = vec!["25".to_string(), "25".to_string(), "25".to_string()];
         let drift = compute_numeric_drift(&baseline, &incoming);
-        
+
         // Should have high drift
         assert!(drift > 0.5);
     }
@@ -165,7 +168,7 @@ mod tests {
 
         let incoming = vec!["urban".to_string(), "suburban".to_string()];
         let drift = compute_categorical_drift(&baseline, &incoming);
-        
+
         // Should have low drift (same distribution)
         assert!(drift < 0.5);
     }
@@ -180,9 +183,13 @@ mod tests {
         };
 
         // All suburban (completely different)
-        let incoming = vec!["suburban".to_string(), "suburban".to_string(), "suburban".to_string()];
+        let incoming = vec![
+            "suburban".to_string(),
+            "suburban".to_string(),
+            "suburban".to_string(),
+        ];
         let drift = compute_categorical_drift(&baseline, &incoming);
-        
+
         // Should have high drift
         assert!(drift > 0.5);
     }
@@ -210,9 +217,7 @@ mod tests {
         let baseline_stats = FeatureStats {
             name: "location".to_string(),
             feature_type: FeatureType::Categorical,
-            stats: FeatureStatsData::Categorical(CategoricalStats {
-                frequencies: freqs,
-            }),
+            stats: FeatureStatsData::Categorical(CategoricalStats { frequencies: freqs }),
         };
 
         let incoming = vec!["suburban".to_string()];

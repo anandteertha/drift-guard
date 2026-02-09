@@ -137,4 +137,3 @@ pub async fn get_baseline_features(
 
     Ok(features)
 }
-

@@ -1,5 +1,4 @@
-pub mod projects;
+pub mod alerts;
 pub mod baseline;
 pub mod incoming;
-pub mod alerts;
-
+pub mod projects;

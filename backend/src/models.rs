@@ -29,7 +29,7 @@ pub struct BaselineFeature {
     pub baseline_id: String,
     pub feature_name: String,
     pub feature_type: String, // "numeric" or "categorical"
-    pub metadata: String, // JSON string with histogram bins or frequency map
+    pub metadata: String,     // JSON string with histogram bins or frequency map
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -99,7 +99,7 @@ pub enum FeatureStatsData {
 
 #[derive(Debug, Clone)]
 pub struct NumericStats {
-    pub bins: Vec<f64>, // bin edges (11 values for 10 bins)
+    pub bins: Vec<f64>,          // bin edges (11 values for 10 bins)
     pub probabilities: Vec<f64>, // probabilities for each bin
 }
 
@@ -107,4 +107,3 @@ pub struct NumericStats {
 pub struct CategoricalStats {
     pub frequencies: std::collections::HashMap<String, f64>, // normalized frequencies
 }
-

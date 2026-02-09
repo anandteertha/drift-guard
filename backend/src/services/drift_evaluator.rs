@@ -1,6 +1,8 @@
 use crate::models::{FeatureStats, FeatureStatsData, FeatureType};
 use crate::storage::baselines;
-use crate::utils::{compute_feature_drift, compute_prediction_rate, compute_prediction_shift, parse_csv};
+use crate::utils::{
+    compute_feature_drift, compute_prediction_rate, compute_prediction_shift, parse_csv,
+};
 use sqlx::SqlitePool;
 use std::collections::HashMap;
 use std::io::Read;
@@ -37,9 +39,20 @@ pub async fn evaluate_drift<R: Read>(
             let metadata: serde_json::Value = serde_json::from_str(&bf.metadata).ok()?;
             let stats = match bf.feature_type.as_str() {
                 "numeric" => {
-                    let bins = metadata["bins"].as_array()?.iter().filter_map(|v| v.as_f64()).collect();
-                    let probabilities = metadata["probabilities"].as_array()?.iter().filter_map(|v| v.as_f64()).collect();
-                    FeatureStatsData::Numeric(crate::models::NumericStats { bins, probabilities })
+                    let bins = metadata["bins"]
+                        .as_array()?
+                        .iter()
+                        .filter_map(|v| v.as_f64())
+                        .collect();
+                    let probabilities = metadata["probabilities"]
+                        .as_array()?
+                        .iter()
+                        .filter_map(|v| v.as_f64())
+                        .collect();
+                    FeatureStatsData::Numeric(crate::models::NumericStats {
+                        bins,
+                        probabilities,
+                    })
                 }
                 "categorical" => {
                     let frequencies: HashMap<String, f64> = metadata["frequencies"]
@@ -80,10 +93,8 @@ pub async fn evaluate_drift<R: Read>(
 
     // Compute prediction shift
     let incoming_prediction_rate = compute_prediction_rate(&incoming_records);
-    let prediction_shift = compute_prediction_shift(
-        baseline.prediction_rate,
-        incoming_prediction_rate,
-    );
+    let prediction_shift =
+        compute_prediction_shift(baseline.prediction_rate, incoming_prediction_rate);
 
     Ok(DriftResult {
         feature_drifts,
@@ -91,4 +102,3 @@ pub async fn evaluate_drift<R: Read>(
         incoming_prediction_rate,
     })
 }
-

@@ -77,24 +77,26 @@ pub async fn upload_incoming(
 
     // Evaluate drift
     let cursor_for_drift = Cursor::new(file_data);
-    let drift_result = match drift_evaluator::evaluate_drift(&pool, &project_id, cursor_for_drift).await {
-        Ok(result) => result,
-        Err(e) => {
-            return HttpResponse::InternalServerError().json(serde_json::json!({
-                "error": format!("Failed to evaluate drift: {}", e)
-            }));
-        }
-    };
+    let drift_result =
+        match drift_evaluator::evaluate_drift(&pool, &project_id, cursor_for_drift).await {
+            Ok(result) => result,
+            Err(e) => {
+                return HttpResponse::InternalServerError().json(serde_json::json!({
+                    "error": format!("Failed to evaluate drift: {}", e)
+                }));
+            }
+        };
 
     // Reconstruct baseline features for alert generation
-    let baseline_features_db = match baselines::get_baseline_features(&pool, &baseline.baseline_id).await {
-        Ok(features) => features,
-        Err(e) => {
-            return HttpResponse::InternalServerError().json(serde_json::json!({
-                "error": format!("Failed to get baseline features: {}", e)
-            }));
-        }
-    };
+    let baseline_features_db =
+        match baselines::get_baseline_features(&pool, &baseline.baseline_id).await {
+            Ok(features) => features,
+            Err(e) => {
+                return HttpResponse::InternalServerError().json(serde_json::json!({
+                    "error": format!("Failed to get baseline features: {}", e)
+                }));
+            }
+        };
 
     let baseline_features: Vec<crate::models::FeatureStats> = baseline_features_db
         .iter()
@@ -102,17 +104,31 @@ pub async fn upload_incoming(
             let metadata: serde_json::Value = serde_json::from_str(&bf.metadata).ok()?;
             let stats = match bf.feature_type.as_str() {
                 "numeric" => {
-                    let bins = metadata["bins"].as_array()?.iter().filter_map(|v| v.as_f64()).collect();
-                    let probabilities = metadata["probabilities"].as_array()?.iter().filter_map(|v| v.as_f64()).collect();
-                    crate::models::FeatureStatsData::Numeric(crate::models::NumericStats { bins, probabilities })
+                    let bins = metadata["bins"]
+                        .as_array()?
+                        .iter()
+                        .filter_map(|v| v.as_f64())
+                        .collect();
+                    let probabilities = metadata["probabilities"]
+                        .as_array()?
+                        .iter()
+                        .filter_map(|v| v.as_f64())
+                        .collect();
+                    crate::models::FeatureStatsData::Numeric(crate::models::NumericStats {
+                        bins,
+                        probabilities,
+                    })
                 }
                 "categorical" => {
-                    let frequencies: std::collections::HashMap<String, f64> = metadata["frequencies"]
+                    let frequencies: std::collections::HashMap<String, f64> = metadata
+                        ["frequencies"]
                         .as_object()?
                         .iter()
                         .filter_map(|(k, v)| Some((k.clone(), v.as_f64()?)))
                         .collect();
-                    crate::models::FeatureStatsData::Categorical(crate::models::CategoricalStats { frequencies })
+                    crate::models::FeatureStatsData::Categorical(crate::models::CategoricalStats {
+                        frequencies,
+                    })
                 }
                 _ => return None,
             };
@@ -153,4 +169,3 @@ pub async fn upload_incoming(
         health,
     })
 }
-

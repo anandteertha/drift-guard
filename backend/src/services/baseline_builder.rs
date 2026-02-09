@@ -58,4 +58,3 @@ pub async fn build_baseline_from_csv<R: Read>(
 
     Ok((baseline.baseline_version, feature_stats))
 }
-

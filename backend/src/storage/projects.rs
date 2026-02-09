@@ -82,4 +82,3 @@ pub async fn get_project(pool: &SqlitePool, project_id: &str) -> anyhow::Result<
         Ok(None)
     }
 }
-

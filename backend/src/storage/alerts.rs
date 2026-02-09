@@ -147,4 +147,3 @@ pub async fn ack_alert(pool: &SqlitePool, alert_id: &str) -> anyhow::Result<()> 
 
     Ok(())
 }
-

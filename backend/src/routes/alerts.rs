@@ -41,4 +41,3 @@ pub async fn ack_alert(
         })),
     }
 }
-

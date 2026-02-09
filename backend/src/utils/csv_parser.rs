@@ -1,12 +1,12 @@
-use crate::models::{FeatureStats, FeatureStatsData, FeatureType, NumericStats, CategoricalStats};
+use crate::models::{CategoricalStats, FeatureStats, FeatureStatsData, FeatureType, NumericStats};
 use csv::ReaderBuilder;
 use std::collections::HashMap;
 use std::io::Read;
 
-pub fn parse_csv<R: Read>(reader: R) -> anyhow::Result<(Vec<HashMap<String, String>>, Vec<String>)> {
-    let mut rdr = ReaderBuilder::new()
-        .has_headers(true)
-        .from_reader(reader);
+pub fn parse_csv<R: Read>(
+    reader: R,
+) -> anyhow::Result<(Vec<HashMap<String, String>>, Vec<String>)> {
+    let mut rdr = ReaderBuilder::new().has_headers(true).from_reader(reader);
 
     let headers = rdr.headers()?.clone();
     let header_names: Vec<String> = headers.iter().map(|h| h.to_string()).collect();
@@ -33,7 +33,10 @@ pub fn infer_feature_types(
     let mut types = HashMap::new();
 
     for feature_name in feature_names {
-        if feature_name == "prediction" || feature_name == "confidence" || feature_name == "timestamp" {
+        if feature_name == "prediction"
+            || feature_name == "confidence"
+            || feature_name == "timestamp"
+        {
             continue; // Skip special columns
         }
 
@@ -72,7 +75,10 @@ pub fn build_baseline_stats(
     let mut stats = Vec::new();
 
     for feature_name in feature_names {
-        if feature_name == "prediction" || feature_name == "confidence" || feature_name == "timestamp" {
+        if feature_name == "prediction"
+            || feature_name == "confidence"
+            || feature_name == "timestamp"
+        {
             continue;
         }
 
@@ -102,10 +108,16 @@ pub fn build_baseline_stats(
     stats
 }
 
-fn build_numeric_histogram(records: &[HashMap<String, String>], feature_name: &str) -> NumericStats {
+fn build_numeric_histogram(
+    records: &[HashMap<String, String>],
+    feature_name: &str,
+) -> NumericStats {
     let mut values: Vec<f64> = records
         .iter()
-        .filter_map(|r| r.get(feature_name).and_then(|v| v.trim().parse::<f64>().ok()))
+        .filter_map(|r| {
+            r.get(feature_name)
+                .and_then(|v| v.trim().parse::<f64>().ok())
+        })
         .collect();
 
     if values.is_empty() {
@@ -152,7 +164,10 @@ fn build_numeric_histogram(records: &[HashMap<String, String>], feature_name: &s
         .map(|&count| count as f64 / total)
         .collect();
 
-    NumericStats { bins, probabilities }
+    NumericStats {
+        bins,
+        probabilities,
+    }
 }
 
 fn build_categorical_frequencies(
@@ -187,7 +202,10 @@ fn build_categorical_frequencies(
 pub fn compute_prediction_rate(records: &[HashMap<String, String>]) -> f64 {
     let predictions: Vec<f64> = records
         .iter()
-        .filter_map(|r| r.get("prediction").and_then(|v| v.trim().parse::<f64>().ok()))
+        .filter_map(|r| {
+            r.get("prediction")
+                .and_then(|v| v.trim().parse::<f64>().ok())
+        })
         .collect();
 
     if predictions.is_empty() {
@@ -205,7 +223,7 @@ mod tests {
     fn test_parse_csv() {
         let csv_data = "prediction,income,age\n0,25000,25\n1,30000,28\n";
         let (records, headers) = parse_csv(csv_data.as_bytes()).unwrap();
-        
+
         assert_eq!(headers, vec!["prediction", "income", "age"]);
         assert_eq!(records.len(), 2);
         assert_eq!(records[0].get("prediction"), Some(&"0".to_string()));
@@ -232,7 +250,14 @@ mod tests {
         let mut records = Vec::new();
         for i in 0..10 {
             let mut record = HashMap::new();
-            record.insert("prediction".to_string(), if i < 3 { "1".to_string() } else { "0".to_string() });
+            record.insert(
+                "prediction".to_string(),
+                if i < 3 {
+                    "1".to_string()
+                } else {
+                    "0".to_string()
+                },
+            );
             records.push(record);
         }
 
