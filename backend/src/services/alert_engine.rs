@@ -1,4 +1,4 @@
-use crate::models::FeatureStats;
+use crate::models::{CreateAlertParams, FeatureStats};
 use crate::services::drift_evaluator::DriftResult;
 use crate::storage::alerts;
 use sqlx::SqlitePool;
@@ -34,13 +34,15 @@ pub async fn generate_alerts(
         if !incoming_feature_names.contains(feature_name) {
             alerts::create_alert(
                 pool,
-                project_id,
-                baseline_version,
-                "CRITICAL",
-                "SCHEMA",
-                Some(feature_name),
-                None,
-                &format!("Missing required feature: {}", feature_name),
+                &CreateAlertParams {
+                    project_id: project_id.to_string(),
+                    baseline_version,
+                    severity: "CRITICAL".to_string(),
+                    alert_type: "SCHEMA".to_string(),
+                    feature_name: Some(feature_name.clone()),
+                    metric_value: None,
+                    message: format!("Missing required feature: {}", feature_name),
+                },
             )
             .await?;
             alerts_created += 1;
@@ -53,13 +55,15 @@ pub async fn generate_alerts(
         if !baseline_feature_names.contains(feature_name) {
             alerts::create_alert(
                 pool,
-                project_id,
-                baseline_version,
-                "WARN",
-                "SCHEMA",
-                Some(feature_name),
-                None,
-                &format!("Extra feature detected: {}", feature_name),
+                &CreateAlertParams {
+                    project_id: project_id.to_string(),
+                    baseline_version,
+                    severity: "WARN".to_string(),
+                    alert_type: "SCHEMA".to_string(),
+                    feature_name: Some(feature_name.clone()),
+                    metric_value: None,
+                    message: format!("Extra feature detected: {}", feature_name),
+                },
             )
             .await?;
             alerts_created += 1;
@@ -81,22 +85,24 @@ pub async fn generate_alerts(
 
         alerts::create_alert(
             pool,
-            project_id,
-            baseline_version,
-            severity,
-            "FEATURE_DRIFT",
-            Some(feature_name),
-            Some(*drift_value),
-            &format!(
-                "Feature '{}' drift detected: {:.4} (threshold: {})",
-                feature_name,
-                drift_value,
-                if *drift_value >= FEATURE_DRIFT_CRITICAL_THRESHOLD {
-                    "CRITICAL"
-                } else {
-                    "WARN"
-                }
-            ),
+            &CreateAlertParams {
+                project_id: project_id.to_string(),
+                baseline_version,
+                severity: severity.to_string(),
+                alert_type: "FEATURE_DRIFT".to_string(),
+                feature_name: Some(feature_name.clone()),
+                metric_value: Some(*drift_value),
+                message: format!(
+                    "Feature '{}' drift detected: {:.4} (threshold: {})",
+                    feature_name,
+                    drift_value,
+                    if *drift_value >= FEATURE_DRIFT_CRITICAL_THRESHOLD {
+                        "CRITICAL"
+                    } else {
+                        "WARN"
+                    }
+                ),
+            },
         )
         .await?;
         alerts_created += 1;
@@ -120,18 +126,20 @@ pub async fn generate_alerts(
     if severity != "OK" {
         alerts::create_alert(
             pool,
-            project_id,
-            baseline_version,
-            severity,
-            "PREDICTION_SHIFT",
-            None,
-            Some(drift_result.prediction_shift),
-            &format!(
-                "Prediction rate shift detected: {:.4} (baseline: {:.4}, incoming: {:.4})",
-                drift_result.prediction_shift,
-                drift_result.incoming_prediction_rate - drift_result.prediction_shift,
-                drift_result.incoming_prediction_rate
-            ),
+            &CreateAlertParams {
+                project_id: project_id.to_string(),
+                baseline_version,
+                severity: severity.to_string(),
+                alert_type: "PREDICTION_SHIFT".to_string(),
+                feature_name: None,
+                metric_value: Some(drift_result.prediction_shift),
+                message: format!(
+                    "Prediction rate shift detected: {:.4} (baseline: {:.4}, incoming: {:.4})",
+                    drift_result.prediction_shift,
+                    drift_result.incoming_prediction_rate - drift_result.prediction_shift,
+                    drift_result.incoming_prediction_rate
+                ),
+            },
         )
         .await?;
         alerts_created += 1;

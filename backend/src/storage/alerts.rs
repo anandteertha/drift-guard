@@ -5,17 +5,12 @@ use uuid::Uuid;
 
 pub async fn create_alert(
     pool: &SqlitePool,
-    project_id: &str,
-    baseline_version: i64,
-    severity: &str,
-    alert_type: &str,
-    feature_name: Option<&str>,
-    metric_value: Option<f64>,
-    message: &str,
+    params: &crate::models::CreateAlertParams,
 ) -> anyhow::Result<Alert> {
     let alert_id = Uuid::new_v4().to_string();
     let created_at = Utc::now();
     let created_at_str = created_at.to_rfc3339();
+    let feature_name_ref = params.feature_name.as_deref();
 
     sqlx::query!(
         r#"
@@ -23,28 +18,28 @@ pub async fn create_alert(
         VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, 'OPEN')
         "#,
         alert_id,
-        project_id,
-        baseline_version,
+        params.project_id,
+        params.baseline_version,
         created_at_str,
-        severity,
-        alert_type,
-        feature_name,
-        metric_value,
-        message
+        params.severity,
+        params.alert_type,
+        feature_name_ref,
+        params.metric_value,
+        params.message
     )
     .execute(pool)
     .await?;
 
     Ok(Alert {
         alert_id,
-        project_id: project_id.to_string(),
-        baseline_version,
+        project_id: params.project_id.clone(),
+        baseline_version: params.baseline_version,
         created_at,
-        severity: severity.to_string(),
-        alert_type: alert_type.to_string(),
-        feature_name: feature_name.map(|s| s.to_string()),
-        metric_value,
-        message: message.to_string(),
+        severity: params.severity.clone(),
+        alert_type: params.alert_type.clone(),
+        feature_name: params.feature_name.clone(),
+        metric_value: params.metric_value,
+        message: params.message.clone(),
         status: "OPEN".to_string(),
     })
 }
@@ -98,7 +93,6 @@ pub async fn list_alerts(
     if let Some(end_time) = &filter.end_time {
         query.push_str(&format!(" AND created_at <= ?{}", param_index));
         params.push(end_time.clone());
-        param_index += 1;
     }
 
     query.push_str(" ORDER BY created_at DESC");

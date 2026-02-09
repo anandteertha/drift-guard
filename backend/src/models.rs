@@ -71,6 +71,17 @@ pub struct AlertFilter {
     pub end_time: Option<String>,   // ISO 8601 format
 }
 
+#[derive(Debug, Clone)]
+pub struct CreateAlertParams {
+    pub project_id: String,
+    pub baseline_version: i64,
+    pub severity: String,
+    pub alert_type: String,
+    pub feature_name: Option<String>,
+    pub metric_value: Option<f64>,
+    pub message: String,
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct UploadIncomingResponse {
     pub rows_processed: usize,

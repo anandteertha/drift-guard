@@ -52,8 +52,8 @@ fn compute_numeric_drift(baseline: &NumericStats, incoming_values: &[String]) ->
 
     // Compute L1 distance (simpler than Jensen-Shannon for v1)
     let mut l1_distance = 0.0;
-    for i in 0..num_bins {
-        l1_distance += (baseline.probabilities[i] - incoming_probs[i]).abs();
+    for (prob_baseline, prob_incoming) in baseline.probabilities.iter().zip(incoming_probs.iter()) {
+        l1_distance += (prob_baseline - prob_incoming).abs();
     }
 
     // Normalize to 0-1 range (L1 distance for distributions is 0-2, so divide by 2)
@@ -139,7 +139,7 @@ mod tests {
         let drift = compute_numeric_drift(&baseline, &incoming);
 
         // Should have some drift but not extreme
-        assert!(drift >= 0.0 && drift <= 1.0);
+        assert!((0.0..=1.0).contains(&drift));
     }
 
     #[test]
@@ -207,7 +207,7 @@ mod tests {
 
         let incoming = vec!["5".to_string(), "15".to_string()];
         let drift = compute_feature_drift(&baseline_stats, &incoming);
-        assert!(drift >= 0.0 && drift <= 1.0);
+        assert!((0.0..=1.0).contains(&drift));
     }
 
     #[test]

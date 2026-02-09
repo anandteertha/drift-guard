@@ -3,9 +3,11 @@ use csv::ReaderBuilder;
 use std::collections::HashMap;
 use std::io::Read;
 
+pub type CsvParseResult = (Vec<HashMap<String, String>>, Vec<String>);
+
 pub fn parse_csv<R: Read>(
     reader: R,
-) -> anyhow::Result<(Vec<HashMap<String, String>>, Vec<String>)> {
+) -> anyhow::Result<CsvParseResult> {
     let mut rdr = ReaderBuilder::new().has_headers(true).from_reader(reader);
 
     let headers = rdr.headers()?.clone();
