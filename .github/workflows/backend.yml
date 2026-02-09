@@ -25,6 +25,7 @@ jobs:
         uses: dtolnay/rust-toolchain@stable
         with:
           toolchain: stable
+          components: rustfmt, clippy
 
       - name: Cache cargo dependencies
         uses: actions/cache@v3
@@ -35,18 +36,18 @@ jobs:
             ~/.cargo/registry/cache/
             ~/.cargo/git/db/
             backend/target/
-          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          key: ${{ runner.os }}-cargo-${{ hashFiles('backend/Cargo.lock') }}
           restore-keys: |
             ${{ runner.os }}-cargo-
 
       - name: Run tests
         working-directory: ./backend
-        run: cargo test --all-features
+        run: cargo test --all-features --verbose
 
       - name: Check formatting
         working-directory: ./backend
-        run: cargo fmt -- --check || true
+        run: cargo fmt -- --check
 
       - name: Check clippy
         working-directory: ./backend
-        run: cargo clippy -- -D warnings || true
+        run: cargo clippy --all-features -- -D warnings
