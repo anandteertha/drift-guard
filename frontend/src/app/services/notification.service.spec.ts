@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { NotificationService } from './notification.service';
 
 describe('NotificationService', () => {
@@ -9,11 +9,16 @@ describe('NotificationService', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [MatSnackBarModule, BrowserAnimationsModule],
+      imports: [MatSnackBarModule, NoopAnimationsModule],
       providers: [NotificationService]
     });
     service = TestBed.inject(NotificationService);
     snackBar = TestBed.inject(MatSnackBar);
+  });
+
+  afterEach(() => {
+    // Clean up any open snackbars
+    snackBar.dismiss();
   });
 
   it('should be created', () => {

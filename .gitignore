@@ -13,6 +13,7 @@ yarn-error.log
 # Angular
 dist/
 .angular/
+frontend/coverage/
 
 # IDE
 .vscode/
@@ -25,3 +26,5 @@ dist/
 .DS_Store
 Thumbs.db
 
+
+/coverage/

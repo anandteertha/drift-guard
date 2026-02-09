@@ -37,5 +37,11 @@ module.exports = {
   },
   maxWorkers: process.env.CI ? 2 : '50%',
   testTimeout: 10000,
+  silent: false,
+  verbose: false,
+  // Suppress console output during tests unless explicitly needed
+  testEnvironmentOptions: {
+    customExportConditions: [''],
+  },
 };
 
